@@ -390,10 +390,10 @@ function App(){
   const navItems=[{id:'train',icon:'🏋️',label:'Treinar'},{id:'bank',icon:'📚',label:'Exercícios'},{id:'builder',icon:'🔧',label:'Montar'},{id:'body',icon:'📊',label:'Corpo'}];
 
   return h('div',{style:{background:'#0a0a0a',minHeight:'100dvh',color:'#b0b8c8',paddingBottom:80}},
-    screen==='train'&&h(Train),
-    screen==='bank'&&h(Bank),
-    screen==='builder'&&h(Builder),
-    screen==='body'&&h(Body),
+    screen==='train'&&Train(),
+    screen==='bank'&&Bank(),
+    screen==='builder'&&Builder(),
+    screen==='body'&&Body(),
     h(Modals),
     h('nav',{style:{position:'fixed',bottom:0,left:0,right:0,background:'rgba(10,10,10,.95)',backdropFilter:'blur(14px)',borderTop:'1px solid #252a35',display:'flex',zIndex:200,padding:'6px 0',paddingBottom:'max(6px,env(safe-area-inset-bottom))'}},
       navItems.map(n=>h('button',{key:n.id,onClick:()=>{setScreen(n.id);setEditingEx(null);setEditingDay(null)},style:{flex:1,background:'none',border:'none',padding:'8px 4px',textAlign:'center',cursor:'pointer',color:screen===n.id?'#e8ff47':'#666',fontSize:10,fontWeight:screen===n.id?600:400}},
