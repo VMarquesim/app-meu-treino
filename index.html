@@ -224,10 +224,10 @@ function App(){
               h('div',{style:{display:'grid',gridTemplateColumns:'36px 1fr 70px 44px',gap:6,padding:'0 4px 6px',fontSize:10,fontWeight:600,letterSpacing:'.1em',textTransform:'uppercase',color:'#e8ff47'}},h('div',null,'Série'),h('div',null,'Reps'),h('div',null,'Carga'),h('div',{style:{textAlign:'center'}},'✓')),
               ...Array.from({length:wex.sets},(_,si)=>{
                 const ck=checks[`${day.id}_${ei}_${si}`];
-                return h('div',{key:si,style:{display:'grid',gridTemplateColumns:'36px 1fr 70px 44px',gap:6,alignItems:'center',padding:'7px 4px',borderBottom:si<wex.sets-1?'1px solid rgba(37,42,53,.5)':'none',background:ck?'rgba(71,255,224,.08)':'transparent',borderRadius:ck?6:0}},
+                return h('div',{key:`set-${day.id}-${ei}-${si}`,style:{display:'grid',gridTemplateColumns:'36px 1fr 70px 44px',gap:6,alignItems:'center',padding:'7px 4px',borderBottom:si<wex.sets-1?'1px solid rgba(37,42,53,.5)':'none',background:ck?'rgba(71,255,224,.08)':'transparent',borderRadius:ck?6:0}},
                   h('div',{style:{fontFamily:"'Bebas Neue'",fontSize:18,color:ck?'#47ffe0':'#b0b8c8',textAlign:'center'}},si+1),
                   h('div',{style:{fontSize:13,color:'#f0f2f7'}},wex.reps),
-                  h('input',{value:weights[`${day.id}_${ei}_${si}`]||'',onChange:e=>setWt(day.id,ei,si,e.target.value),placeholder:'kg',style:{...c.inp,padding:'6px',fontSize:13,textAlign:'center'}}),
+                  h('input',{key:`wt-${day.id}-${ei}-${si}`,value:weights[`${day.id}_${ei}_${si}`]||'',onChange:e=>setWt(day.id,ei,si,e.target.value),placeholder:'kg',style:{...c.inp,padding:'6px',fontSize:13,textAlign:'center'}}),
                   h('button',{onClick:()=>toggleCheck(day.id,ei,si),style:{width:36,height:36,borderRadius:'50%',border:'2px solid '+(ck?'#47ffe0':'#252a35'),background:ck?'#47ffe0':'transparent',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',margin:'0 auto'}},
                     h('svg',{width:16,height:16,viewBox:'0 0 24 24',fill:'none',stroke:ck?'#0a0a0a':'#252a35',strokeWidth:3},h('path',{d:'M5 12l5 5L20 7'}))
                   )
@@ -248,7 +248,7 @@ function App(){
     const grouped={};filtered.forEach(e=>{if(!grouped[e.group])grouped[e.group]=[];grouped[e.group].push(e)});
     return h('div',null,
       h('div',{style:c.topbar},h('div',{style:{fontFamily:"'Bebas Neue'",fontSize:22,color:'#f0f2f7'}},'BANCO DE ',h('span',{style:{color:'#47ffe0'}},'EXERCÍCIOS')),h('div',{style:{fontSize:11,color:'#b0b8c8'}},exercises.length+' cadastrados')),
-      h('div',{style:{padding:'12px 16px 8px'}},h('input',{value:bankSearch,onChange:e=>setBankSearch(e.target.value),placeholder:'🔍 Buscar exercício...',style:{...c.inp,fontSize:13}})),
+      h('div',{style:{padding:'12px 16px 8px'}},h('input',{key:'bank-search',value:bankSearch,onChange:e=>setBankSearch(e.target.value),placeholder:'🔍 Buscar exercício...',style:{...c.inp,fontSize:13}})),
       h('div',{style:{display:'flex',gap:5,padding:'4px 16px 12px',overflowX:'auto'}},['Todos',...GROUPS].map(g=>h('button',{key:g,onClick:()=>setBankFilter(g),style:{flexShrink:0,background:bankFilter===g?'#47ffe0':'#141820',border:'1px solid '+(bankFilter===g?'#47ffe0':'#252a35'),borderRadius:6,padding:'6px 12px',fontSize:10,fontWeight:500,color:bankFilter===g?'#0a0a0a':'#b0b8c8',cursor:'pointer'}},g==='Todos'?'📋 Todos':(GI[g]||'')+' '+g))),
       h('div',{style:{padding:'0 16px 12px'}},h('button',{onClick:()=>setEditingEx({id:uid(),name:'',group:'Peito',equip:'Smith',tip:'',defaultSets:3,defaultReps:'10-12',defaultRest:60}),style:{...c.btn('#47ffe0','#0a0a0a'),width:'100%',fontSize:14}},'＋ Novo Exercício')),
       h('div',{style:{padding:'0 16px'}},Object.entries(grouped).map(([group,exs])=>h('div',{key:group},
@@ -258,21 +258,21 @@ function App(){
           h('div',{style:{color:'#444',fontSize:16}},'✏️')
         ))
       ))),
-      editingEx&&h('div',{style:{position:'fixed',inset:0,background:'rgba(0,0,0,.8)',zIndex:300,display:'flex',alignItems:'flex-end',justifyContent:'center'}},
+      editingEx&&h('div',{key:'modal-ex-'+editingEx.id,style:{position:'fixed',inset:0,background:'rgba(0,0,0,.8)',zIndex:300,display:'flex',alignItems:'flex-end',justifyContent:'center'}},
         h('div',{style:{background:'#141820',border:'1px solid #252a35',borderRadius:'20px 20px 0 0',padding:'24px 20px 32px',width:'100%',maxWidth:500,maxHeight:'85vh',overflow:'auto'}},
           h('div',{style:{fontFamily:"'Bebas Neue'",fontSize:22,color:'#47ffe0',marginBottom:16}},exercises.find(e=>e.id===editingEx.id)?'Editar':'Novo',' Exercício'),
           h('div',{style:{display:'flex',flexDirection:'column',gap:10}},
-            h('div',null,h('label',{style:c.lbl},'Nome'),h('input',{value:editingEx.name,onChange:e=>setEditingEx({...editingEx,name:e.target.value}),style:{...c.inp,marginTop:4},placeholder:'Ex: Supino Inclinado com Halteres'})),
+            h('div',null,h('label',{style:c.lbl},'Nome'),h('input',{key:'ex-name-'+editingEx.id,value:editingEx.name,onChange:e=>setEditingEx({...editingEx,name:e.target.value}),style:{...c.inp,marginTop:4},placeholder:'Ex: Supino Inclinado com Halteres'})),
             h('div',{style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}},
-              h('div',null,h('label',{style:c.lbl},'Grupo'),h('select',{value:editingEx.group,onChange:e=>setEditingEx({...editingEx,group:e.target.value}),style:{...c.inp,marginTop:4}},GROUPS.map(g=>h('option',{key:g,value:g},g)))),
-              h('div',null,h('label',{style:c.lbl},'Equipamento'),h('input',{value:editingEx.equip,onChange:e=>setEditingEx({...editingEx,equip:e.target.value}),style:{...c.inp,marginTop:4}}))
+              h('div',null,h('label',{style:c.lbl},'Grupo'),h('select',{key:'ex-group-'+editingEx.id,value:editingEx.group,onChange:e=>setEditingEx({...editingEx,group:e.target.value}),style:{...c.inp,marginTop:4}},GROUPS.map(g=>h('option',{key:g,value:g},g)))),
+              h('div',null,h('label',{style:c.lbl},'Equipamento'),h('input',{key:'ex-equip-'+editingEx.id,value:editingEx.equip,onChange:e=>setEditingEx({...editingEx,equip:e.target.value}),style:{...c.inp,marginTop:4}}))
             ),
             h('div',{style:{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:10}},
-              h('div',null,h('label',{style:c.lbl},'Séries'),h('input',{type:'number',value:editingEx.defaultSets,onChange:e=>setEditingEx({...editingEx,defaultSets:parseInt(e.target.value)||3}),style:{...c.inp,marginTop:4}})),
-              h('div',null,h('label',{style:c.lbl},'Reps'),h('input',{value:editingEx.defaultReps,onChange:e=>setEditingEx({...editingEx,defaultReps:e.target.value}),style:{...c.inp,marginTop:4}})),
-              h('div',null,h('label',{style:c.lbl},'Descanso (s)'),h('input',{type:'number',value:editingEx.defaultRest,onChange:e=>setEditingEx({...editingEx,defaultRest:parseInt(e.target.value)||60}),style:{...c.inp,marginTop:4}}))
+              h('div',null,h('label',{style:c.lbl},'Séries'),h('input',{key:'ex-sets-'+editingEx.id,type:'number',value:editingEx.defaultSets,onChange:e=>setEditingEx({...editingEx,defaultSets:parseInt(e.target.value)||3}),style:{...c.inp,marginTop:4}})),
+              h('div',null,h('label',{style:c.lbl},'Reps'),h('input',{key:'ex-reps-'+editingEx.id,value:editingEx.defaultReps,onChange:e=>setEditingEx({...editingEx,defaultReps:e.target.value}),style:{...c.inp,marginTop:4}})),
+              h('div',null,h('label',{style:c.lbl},'Descanso (s)'),h('input',{key:'ex-rest-'+editingEx.id,type:'number',value:editingEx.defaultRest,onChange:e=>setEditingEx({...editingEx,defaultRest:parseInt(e.target.value)||60}),style:{...c.inp,marginTop:4}}))
             ),
-            h('div',null,h('label',{style:c.lbl},'Dica'),h('textarea',{value:editingEx.tip,onChange:e=>setEditingEx({...editingEx,tip:e.target.value}),rows:3,style:{...c.inp,marginTop:4,resize:'vertical'},placeholder:'Instruções de execução...'}))
+            h('div',null,h('label',{style:c.lbl},'Dica'),h('textarea',{key:'ex-tip-'+editingEx.id,value:editingEx.tip,onChange:e=>setEditingEx({...editingEx,tip:e.target.value}),rows:3,style:{...c.inp,marginTop:4,resize:'vertical'},placeholder:'Instruções de execução...'}))
           ),
           h('div',{style:{display:'flex',gap:8,marginTop:20}},
             h('button',{onClick:()=>setEditingEx(null),style:{...c.btn('#1a1f2a','#b0b8c8'),flex:1,border:'1px solid #252a35'}},'Cancelar'),
@@ -296,23 +296,23 @@ function App(){
         ),
         editingDay===di&&h('div',{style:{padding:'0 16px 16px'}},
           h('div',{style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8,marginBottom:12}},
-            h('div',null,h('label',{style:c.lbl},'Nome'),h('input',{value:day.name,onChange:e=>updDay(di,'name',e.target.value),style:{...c.inp,marginTop:4,fontSize:13}})),
-            h('div',null,h('label',{style:c.lbl},'Subtítulo'),h('input',{value:day.subtitle,onChange:e=>updDay(di,'subtitle',e.target.value),style:{...c.inp,marginTop:4,fontSize:13}}))
+            h('div',null,h('label',{style:c.lbl},'Nome'),h('input',{key:'day-name-'+day.id,value:day.name,onChange:e=>updDay(di,'name',e.target.value),style:{...c.inp,marginTop:4,fontSize:13}})),
+            h('div',null,h('label',{style:c.lbl},'Subtítulo'),h('input',{key:'day-subtitle-'+day.id,value:day.subtitle,onChange:e=>updDay(di,'subtitle',e.target.value),style:{...c.inp,marginTop:4,fontSize:13}}))
           ),
           h('div',{style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8,marginBottom:14}},
-            h('div',null,h('label',{style:c.lbl},'Aquecimento'),h('input',{value:day.warmup,onChange:e=>updDay(di,'warmup',e.target.value),style:{...c.inp,marginTop:4,fontSize:12}})),
-            h('div',null,h('label',{style:c.lbl},'Cardio'),h('input',{value:day.cardio,onChange:e=>updDay(di,'cardio',e.target.value),style:{...c.inp,marginTop:4,fontSize:12}}))
+            h('div',null,h('label',{style:c.lbl},'Aquecimento'),h('input',{key:'day-warmup-'+day.id,value:day.warmup,onChange:e=>updDay(di,'warmup',e.target.value),style:{...c.inp,marginTop:4,fontSize:12}})),
+            h('div',null,h('label',{style:c.lbl},'Cardio'),h('input',{key:'day-cardio-'+day.id,value:day.cardio,onChange:e=>updDay(di,'cardio',e.target.value),style:{...c.inp,marginTop:4,fontSize:12}}))
           ),
           h('div',{style:{fontSize:10,fontWeight:600,letterSpacing:'.15em',textTransform:'uppercase',color:'#e8ff47',marginBottom:8}},'Exercícios (arraste para reordenar)'),
-          day.exercises.map((wex,ei)=>{const ex=getEx(wex.exId);return h('div',{key:ei,draggable:true,onDragStart:()=>setDragIdx(ei),onDragOver:e=>e.preventDefault(),onDrop:()=>{moveEx(di,dragIdx,ei);setDragIdx(null)},style:{background:dragIdx===ei?'rgba(255,162,71,.1)':'#1a1f2a',border:'1px solid #252a35',borderRadius:8,padding:'10px 12px',marginBottom:6,display:'flex',alignItems:'center',gap:8,cursor:'grab'}},
+          day.exercises.map((wex,ei)=>{const ex=getEx(wex.exId);return h('div',{key:`day-ex-${day.id}-${ei}`,draggable:true,onDragStart:()=>setDragIdx(ei),onDragOver:e=>e.preventDefault(),onDrop:()=>{moveEx(di,dragIdx,ei);setDragIdx(null)},style:{background:dragIdx===ei?'rgba(255,162,71,.1)':'#1a1f2a',border:'1px solid #252a35',borderRadius:8,padding:'10px 12px',marginBottom:6,display:'flex',alignItems:'center',gap:8,cursor:'grab'}},
             h('div',{style:{color:'#555',fontSize:14,cursor:'grab'}},'⠿'),
             h('div',{style:{flex:1,minWidth:0}},h('div',{style:{fontSize:13,fontWeight:500,color:'#f0f2f7',whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}},ex.name),
               h('div',{style:{display:'flex',gap:6,marginTop:4,alignItems:'center',flexWrap:'wrap'}},
-                h('input',{type:'number',value:wex.sets,onChange:e=>updExInDay(di,ei,'sets',parseInt(e.target.value)||1),style:{...c.inp,width:40,padding:'3px 4px',fontSize:11,textAlign:'center'}}),
+                h('input',{key:`day-ex-sets-${day.id}-${ei}`,type:'number',value:wex.sets,onChange:e=>updExInDay(di,ei,'sets',parseInt(e.target.value)||1),style:{...c.inp,width:40,padding:'3px 4px',fontSize:11,textAlign:'center'}}),
                 h('span',{style:{fontSize:11,color:'#666'}},'×'),
-                h('input',{value:wex.reps,onChange:e=>updExInDay(di,ei,'reps',e.target.value),style:{...c.inp,width:55,padding:'3px 4px',fontSize:11,textAlign:'center'}}),
+                h('input',{key:`day-ex-reps-${day.id}-${ei}`,value:wex.reps,onChange:e=>updExInDay(di,ei,'reps',e.target.value),style:{...c.inp,width:55,padding:'3px 4px',fontSize:11,textAlign:'center'}}),
                 h('span',{style:{fontSize:11,color:'#666'}},'⏱'),
-                h('input',{type:'number',value:wex.rest,onChange:e=>updExInDay(di,ei,'rest',parseInt(e.target.value)||60),style:{...c.inp,width:45,padding:'3px 4px',fontSize:11,textAlign:'center'}})
+                h('input',{key:`day-ex-rest-${day.id}-${ei}`,type:'number',value:wex.rest,onChange:e=>updExInDay(di,ei,'rest',parseInt(e.target.value)||60),style:{...c.inp,width:45,padding:'3px 4px',fontSize:11,textAlign:'center'}})
               )
             ),
             h('button',{onClick:()=>rmExFromDay(di,ei),style:{background:'none',border:'none',color:'#ff4747',cursor:'pointer',fontSize:16,opacity:.6}},'✕')
@@ -344,11 +344,11 @@ function App(){
         circs.map(cc=>h('div',{key:cc.key,style:{...c.card,padding:10,textAlign:'center'}},h('div',{style:{fontFamily:"'Bebas Neue'",fontSize:18,color:'#f0f2f7'}},lastB?.[cc.key]??'—'),h('div',{style:{fontSize:9,color:'#b0b8c8',textTransform:'uppercase',letterSpacing:'.06em',marginTop:2}},cc.label),h(Delta,{field:cc.key,inv:cc.inv})))
       ),
       !bodyForm?h('button',{onClick:()=>{const pre={};if(lastB?.altura)pre.altura=lastB.altura;setBodyForm(pre)},style:{width:'100%',background:'#141820',border:'2px dashed #47ffe0',borderRadius:12,padding:14,fontSize:14,fontWeight:600,color:'#47ffe0',cursor:'pointer',marginBottom:14}},'＋ Novo Registro'):
-      h('div',{style:{...c.card,padding:20,border:'1px solid #47ffe0',marginBottom:14}},
+      h('div',{key:'body-form',style:{...c.card,padding:20,border:'1px solid #47ffe0',marginBottom:14}},
         h('div',{style:{fontFamily:"'Bebas Neue'",fontSize:20,color:'#47ffe0',marginBottom:12}},'Registrar Medidas'),
-        [...fields,...circs].map(f=>h('div',{key:f.key,style:{display:'inline-block',width:'48%',marginRight:'2%',marginBottom:8}},
+        [...fields,...circs].map(f=>h('div',{key:'body-field-'+f.key,style:{display:'inline-block',width:'48%',marginRight:'2%',marginBottom:8}},
           h('label',{style:c.lbl},f.label||f.key),
-          h('input',{type:'number',step:'0.1',value:bodyForm[f.key]||'',onChange:e=>setBodyForm({...bodyForm,[f.key]:e.target.value?parseFloat(e.target.value):undefined}),placeholder:f.label,style:{...c.inp,marginTop:3,fontSize:13}})
+          h('input',{key:'body-input-'+f.key,type:'number',step:'0.1',value:bodyForm[f.key]||'',onChange:e=>setBodyForm({...bodyForm,[f.key]:e.target.value?parseFloat(e.target.value):undefined}),placeholder:f.label,style:{...c.inp,marginTop:3,fontSize:13}})
         )),
         h('div',{style:{display:'flex',gap:8,marginTop:12}},
           h('button',{onClick:()=>setBodyForm(null),style:{...c.btn('#1a1f2a','#b0b8c8'),flex:1,border:'1px solid #252a35'}},'Cancelar'),
